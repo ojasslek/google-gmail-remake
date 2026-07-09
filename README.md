@@ -35,7 +35,11 @@ graph TD
     E -->|News| I[Generate Newsletter Summary]
     E -->|Spam| J[Generate Spam Warning]
     
-    F & G & H & I & J --> K[Assign Category & Summary to Email Object]
+    F --> K["Assign Category and Summary to Email Object"]
+    G --> K
+    H --> K
+    I --> K
+    J --> K
     K --> L[Start Flask Local Server on Port 5000]
     L --> M[User navigates to Gmail Remake UI]
     M --> N[Filter and Read Emails by Category]
