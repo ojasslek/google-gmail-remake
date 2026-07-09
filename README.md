@@ -2,6 +2,8 @@
 
 A smart, AI-powered email inbox remake designed to look like Google Gmail. It automatically classifies incoming emails into custom categories and generates concise summaries of their contents using Machine Learning.
 
+![Gmail Remake Interface](static/screenshot.png)
+
 ---
 
 ## 🚀 Key Features
