@@ -7,11 +7,11 @@ A smart, AI-powered email inbox remake designed to look like Google Gmail. It au
 ### Light Mode (Default)
 ![Gmail Remake Interface - Default](static/screenshot.png)
 
-### AI Summaries Enabled
-![Gmail Remake Interface - Summarized](static/screenshot_summarized_light.png)
-
 ### Dark Mode (AI Summaries Enabled)
 ![Gmail Remake Interface - Dark Mode](static/screenshot_summarized_dark.png)
+
+### AI Summaries Enabled (Light Mode)
+![Gmail Remake Interface - Summarized](static/screenshot_summarized_light.png)
 
 ---
 
