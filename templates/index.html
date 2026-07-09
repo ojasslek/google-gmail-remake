@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail</title>
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="icon-btn menu-btn">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="brand" style="display: flex; align-items: center; gap: 8px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail logo" style="height: 24px; width: auto;">
+                    <span style="font-family: 'Product Sans', 'Google Sans', Roboto, sans-serif; font-size: 22px; font-weight: 400; color: var(--gmail-text-secondary); letter-spacing: -0.5px; position: relative; top: -1px;">Gmail</span>
+                </div>
+            </div>
+
+            <div class="header-middle">
+                <div class="search-bar">
+                    <span class="material-symbols-outlined search-icon">search</span>
+                    <input type="text" placeholder="Search mail" class="search-input" />
+                    <span class="material-symbols-outlined tune-icon">tune</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="icon-btn"><span class="material-symbols-outlined">help</span></button>
+                <button class="icon-btn" id="dark-mode-btn" title="Toggle dark mode">
+                    <span class="material-symbols-outlined" id="dark-mode-icon">dark_mode</span>
+                </button>
+                <button class="icon-btn"><span class="material-symbols-outlined">settings</span></button>
+                <button class="icon-btn"><span class="material-symbols-outlined">apps</span></button>
+                <div class="profile-avatar">O</div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+
+            <aside class="sidebar">
+                <button class="compose-btn">
+                    <span class="material-symbols-outlined">edit</span>
+                    <span>Compose</span>
+                </button>
+
+                <nav class="nav-section">
+                    {% set all_count = all_emails|length %}
+                    <a href="{{ url_for('index', category='all') }}"
+                        class="nav-item {% if active_category == 'all' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">inbox</span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="nav-badge">{{ all_count }}</span>
+                    </a>
+
+                    {% set urgent_count = all_emails|selectattr('category', 'equalto', 'urgent')|list|length %}
+                    <a href="{{ url_for('index', category='urgent') }}"
+                        class="nav-item {% if active_category == 'urgent' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">warning</span>
+                        <span class="nav-text">Urgent</span>
+                        {% if urgent_count > 0 %}<span class="nav-badge">{{ urgent_count }}</span>{% endif %}
+                    </a>
+
+                    {% set work_count = all_emails|selectattr('category', 'equalto', 'work')|list|length %}
+                    <a href="{{ url_for('index', category='work') }}"
+                        class="nav-item {% if active_category == 'work' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">work</span>
+                        <span class="nav-text">Work</span>
+                        {% if work_count > 0 %}<span class="nav-badge">{{ work_count }}</span>{% endif %}
+                    </a>
+
+                    {% set personal_count = all_emails|selectattr('category', 'equalto', 'personal')|list|length %}
+                    <a href="{{ url_for('index', category='personal') }}"
+                        class="nav-item {% if active_category == 'personal' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">person</span>
+                        <span class="nav-text">Personal</span>
+                        {% if personal_count > 0 %}<span class="nav-badge">{{ personal_count }}</span>{% endif %}
+                    </a>
+
+                    {% set news_count = all_emails|selectattr('category', 'equalto', 'news')|list|length %}
+                    <a href="{{ url_for('index', category='news') }}"
+                        class="nav-item {% if active_category == 'news' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">article</span>
+                        <span class="nav-text">Newsletters</span>
+                        {% if news_count > 0 %}<span class="nav-badge">{{ news_count }}</span>{% endif %}
+                    </a>
+
+                    {% set spam_count = all_emails|selectattr('category', 'equalto', 'spam')|list|length %}
+                    <a href="{{ url_for('index', category='spam') }}"
+                        class="nav-item {% if active_category == 'spam' %}active{% endif %}">
+                        <span class="material-symbols-outlined nav-icon">report</span>
+                        <span class="nav-text">Spam</span>
+                        {% if spam_count > 0 %}<span class="nav-badge">{{ spam_count }}</span>{% endif %}
+                    </a>
+                </nav>
+            </aside>
+
+            <main class="main-content-wrapper">
+                <div class="main-content">
+                    <div class="inbox-toolbar">
+                        <div class="toolbar-left">
+                            <span class="material-symbols-outlined toolbar-icon">check_box_outline_blank</span>
+                            <span class="material-symbols-outlined toolbar-icon">refresh</span>
+                            <span class="material-symbols-outlined toolbar-icon">more_vert</span>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="ai-btn summarize-btn" id="summarize-btn">
+                                <img src="{{ url_for('static', filename='gemini-star.png') }}" alt="AI"
+                                    class="gemini-icon">
+                                <span id="summarize-label">Summarize</span>
+                            </button>
+                            <span class="pagination-info">{{ emails|length }} of {{ all_emails|length }}</span>
+                            <span class="material-symbols-outlined toolbar-icon disabled">chevron_left</span>
+                            <span class="material-symbols-outlined toolbar-icon disabled">chevron_right</span>
+                        </div>
+                    </div>
+
+                    <div class="inbox-container">
+                        <div class="email-list" id="email-list">
+                            {% for email in emails %}
+                            <div class="email-row">
+                                <div class="email-actions">
+                                    <span class="material-symbols-outlined row-icon checkbox">drag_indicator</span>
+                                    <span
+                                        class="material-symbols-outlined row-icon checkbox">check_box_outline_blank</span>
+                                    <span class="material-symbols-outlined row-icon star">star_border</span>
+                                    <span
+                                        class="material-symbols-outlined row-icon important">label_important_outline</span>
+                                </div>
+                                <div class="email-sender unread">
+                                    {{ email.sender }}
+                                </div>
+                                <div class="email-content-wrapper">
+                                    <div class="email-content unread">
+                                        <span class="email-subject">{{ email.subject }}</span>
+                                        <span class="email-separator"> - </span>
+                                        <span class="email-snippet">{{ email.snippet }}</span>
+                                        {% if email.ai_summary %}
+                                        <span class="email-summary-text">{{ email.ai_summary }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if email.ai_summary and active_category == 'all' %}
+                                    <div class="ai-summary-label cat-{{ email.category }} category-pill">
+                                        {{ email.category }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="email-date unread">
+                                    {{ email.date }}
+                                </div>
+                                <div class="hover-actions">
+                                    <span class="material-symbols-outlined hover-icon">archive</span>
+                                    <span class="material-symbols-outlined hover-icon">delete</span>
+                                    <span class="material-symbols-outlined hover-icon">mark_as_unread</span>
+                                    <span class="material-symbols-outlined hover-icon">schedule</span>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon">inbox</span>
+                                <p>Your inbox is empty.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+<script>
+    // ── Dark mode ──
+    const darkBtn = document.getElementById('dark-mode-btn');
+    const darkIcon = document.getElementById('dark-mode-icon');
+    function applyTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        darkIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }
+    applyTheme(localStorage.getItem('darkMode') === 'true');
+    darkBtn.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        applyTheme(isDark);
+    });
+
+    // ── Summarize toggle ──
+    const summarizeBtn = document.getElementById('summarize-btn');
+    const summarizeLabel = document.getElementById('summarize-label');
+    const emailList = document.getElementById('email-list');
+
+    function applySummarize(active) {
+        emailList.classList.toggle('summarized', active);
+        summarizeLabel.textContent = active ? 'Hide Summary' : 'Summarize';
+        summarizeBtn.classList.toggle('summarize-active', active);
+    }
+
+    applySummarize(localStorage.getItem('summarize') === 'true');
+
+    summarizeBtn.addEventListener('click', () => {
+        const active = !emailList.classList.contains('summarized');
+        localStorage.setItem('summarize', active);
+        applySummarize(active);
+    });
+</script>
+
+</html>
